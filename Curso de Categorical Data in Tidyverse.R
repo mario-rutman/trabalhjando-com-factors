@@ -3,7 +3,13 @@ library(readxl)
 library(skimr)
 library(janitor) # para limpar os nomes das variáveis: clean_names()
 library(here)
+library(forcats)
 
+# Para ficar tudo em portugês.
+Sys.setlocale("LC_ALL", "pt_BR.UTF-8")
+
+# Para não usar notação científica nosnúmeros.
+options(scipen=999)
 
 # Curso "Categorical Data in tidyverse".
 
@@ -55,6 +61,16 @@ mtcars %>%
 summary(ger_trab_ccat_as_factor$Servidor) # Conta a quantidade de cada factor.
 summary(ger_trab_ccat_as_factor$Ação)
 
+# Tem ainda a função que conta os fators e dá a proporção.
+
+fct_count(ger_trab_ccat_as_factor$Servidor, sort = TRUE)
+
+f <- factor(sample(letters)[rpois(1000, 10)])
+table(f)
+fct_count(f)
+fct_count(f, sort = TRUE)
+fct_count(f, sort = TRUE, prop = TRUE)
+
 # Esse agora é sensacional!!! É do pacote forcats.
 # Ordena os gráficos de barra. Aqui a função calculou quantas vezes cada Servidor apareceu.
 # Quanto cada um aparece na lista.
@@ -102,14 +118,17 @@ levels(ger_trab_ccat_as_factor$Ação)
 
 # Estão em ordem alfabética. Mas esta não interessa agora. Quero outra.
 ger_trab_ccat_as_factor_reordenado <- ger_trab_ccat_as_factor %>% 
-  mutate(Ação = fct_relevel(Ação, "conciliação GCT/ARR/SIAFE", "cheque não honrado", "recup. doc. não vinvulado",
-                            "responder sac-DARJ", "proc. restituição", "proc. apostilamento", "Termo de Referência",
+  mutate(Ação = fct_relevel(Ação, "conciliação GCT/ARR/SIAFE", "cheque não honrado",
+                            "recup. doc. não vinvulado",
+                            "responder sac-DARJ", "proc. restituição", 
+                            "proc. apostilamento", "Termo de Referência",
                             "atualiz. relatório arrecad."))
 
 # Agora os levels estão diferentes. 
 levels(ger_trab_ccat_as_factor_reordenado$Ação)
 
 # Podemos recodificar os levels, isto é, dar outros nomes melhores.
+# Primeiro o novo nome, depois o antigo, o que vai ser substituído.
   ger_trab_ccat_as_factor %>% 
   mutate(nome_guerra = fct_recode(Servidor,
                                   'Yoko' = "Elaine Yoko",
@@ -354,3 +373,71 @@ desserts <- read_csv("desserts.csv",
  
  getwd()
 here() 
+
+f <- factor(sample(letters)[rpois(1000, 10)])
+table(f)#> f
+#>   b   d   f   g   h   j   l   m   n   o   p   q   r   s   u   v   w   x   y 
+#> 131  51  93  42   6   2  11 118   1 107   5  24  51  14  65 122   1  53 103 fct_count(f)#> # A tibble: 19 x 2
+#>    f         n
+#>    <fct> <int>
+#>  1 b       131
+#>  2 d        51
+#>  3 f        93
+#>  4 g        42
+#>  5 h         6
+#>  6 j         2
+#>  7 l        11
+#>  8 m       118
+#>  9 n         1
+#> 10 o       107
+#> 11 p         5
+#> 12 q        24
+#> 13 r        51
+#> 14 s        14
+#> 15 u        65
+#> 16 v       122
+#> 17 w         1
+#> 18 x        53
+#> 19 y       103fct_count(f, sort = TRUE)#> # A tibble: 19 x 2
+#>    f         n
+#>    <fct> <int>
+#>  1 b       131
+#>  2 v       122
+#>  3 m       118
+#>  4 o       107
+#>  5 y       103
+#>  6 f        93
+#>  7 u        65
+#>  8 x        53
+#>  9 d        51
+#> 10 r        51
+#> 11 g        42
+#> 12 q        24
+#> 13 s        14
+#> 14 l        11
+#> 15 h         6
+#> 16 p         5
+#> 17 j         2
+#> 18 n         1
+#> 19 w         1fct_count(f, sort = TRUE, prop = TRUE)#> # A tibble: 19 x 3
+#>    f         n     p
+#>    <fct> <int> <dbl>
+#>  1 b       131 0.131
+#>  2 v       122 0.122
+#>  3 m       118 0.118
+#>  4 o       107 0.107
+#>  5 y       103 0.103
+#>  6 f        93 0.093
+#>  7 u        65 0.065
+#>  8 x        53 0.053
+#>  9 d        51 0.051
+#> 10 r        51 0.051
+#> 11 g        42 0.042
+#> 12 q        24 0.024
+#> 13 s        14 0.014
+#> 14 l        11 0.011
+#> 15 h         6 0.006
+#> 16 p         5 0.005
+#> 17 j         2 0.002
+#> 18 n         1 0.001
+#> 19 w         1 0.001
